@@ -5,113 +5,121 @@ import java.util.Scanner;
 
 
 /**
- * 
- * @author zstow
- *	Controls an entire game between player 1 and player 2 
+ * Abstract game class for each game type 
+ *
  */
-public final class Game {
-
-	private static Scanner gameScanner;
-	protected static Deck deck;
+public abstract class Game {
+	
+	protected static Deck deck = new Deck();
+	protected static Scanner gameScanner = new Scanner(System.in);
+	protected static ArrayList<Card> winnersCards = new ArrayList<Card>();
 	protected static Player playerOne;
 	protected static Player playerTwo;
+	protected static int handWinner;
+	protected static int handResult;
+	protected static Card playerOneCard;
+	protected static Card playerTwoCard;
 	
-	private static int currentIterations;
-	private static final int MAX_ITERATIONS = 500;
 	
+	public abstract void playGame();
 	
+	public abstract void playRounds();
 	
-	public static void playGame() {
+	public abstract void determineWinner();
+	
+	public abstract void finishHand();
+	
+	public abstract void handleWar();
+	
+	/**
+	 * Initializes the players and shuffles the deck 
+	 */
+	public static void beginNewGame() {
+		
 		playerOne = new Player(1);
 		playerTwo = new Player(2);
-		gameScanner = new Scanner(System.in);
-		deck = new Deck();
-		currentIterations = 0;
 		
-		beginNewGame();
-		playRounds();
-	}
-	
-	
-	/**
-	 * 	Gets the entered player names from the console, shuffles the deck, and deals the 
-	 *  cards to each player 
-	 */
-	private static void beginNewGame(){
-		
-		System.out.println("Enter the name of player 1: ");
-		playerOne.setName(gameScanner.next());
-		System.out.println("Enter the name of player 2: ");
-		playerTwo.setName(gameScanner.next());
-		
+		System.out.print("Enter the name of player 1: ");
+		playerOne.name = gameScanner.next();
+		System.out.print("\nEnter the name of player 2: ");
+		playerTwo.name = gameScanner.next();
+		System.out.println();
 		deck.shuffleDeck();
-		
-		playerOne.hand = new Hand(playerOne, deck);
-		playerTwo.hand = new Hand(playerTwo, deck);
 	}
-	
 	
 	/**
-	 * 		Handles each round and ends the game if a player holds all of the cards or a set 
-	 * 		number of iterations is reached 
+	 * Lets the user select the game type 
+	 * @return game type based on user's input 
 	 */
-	private static void playRounds() {
+	public static int chooseGameType() {
 		
-		while(currentIterations < MAX_ITERATIONS) {
+		System.out.println("*****  1. Classic Two Player War: Place won cards on the bottom of hand    *****");
+		System.out.println("*****  2. Two Player War: Place won cards in a separate points pile        *****");
+		System.out.println("*****  3. Three Player War: Place won cards in a separate points pile      *****");
+		
+		System.out.print("Choose your game type: ");
+		int gameType = gameScanner.nextInt();
+		System.out.println();	
 			
-			ArrayList<Card> winnersCards = new ArrayList<Card>();
+			switch(gameType) {
 			
-			if(playerOne.hand.playerHand.isEmpty() || playerTwo.hand.playerHand.isEmpty())
-				break;
-			
-			Turn.playCard(playerOne, playerTwo, winnersCards);
-			currentIterations ++;
-			Turn.printScore(playerOne, playerTwo);
+				case 1:
+					return 1;
+				case 2:
+					return 2;
+				case 3:
+					return 3;
+				default:
+					System.out.println("Not a valid selection");
+					return gameType;
+			}
 		}
-		
-		determineWinner(playerOne, playerTwo);
-		System.out.println("Total number of iterations = " + currentIterations);
-	
-	}
-	
 	
 	/**
-	 * 
-	 * @param playerOne
-	 * @param playerTwo
-	 * Determines the winner of the completed game 
+	 * Removes card from players hand and adds it to the winning player's stack 
 	 */
-	private static void determineWinner(Player playerOne, Player playerTwo) {
-		
-		int playerOneCardsInHand = playerOne.hand.playerHand.size();
-		int playerTwoCardsInHand = playerTwo.hand.playerHand.size();
-		
-		if(playerOneCardsInHand > playerTwoCardsInHand) {
-			System.out.println(playerOne.name + " wins!");
-		}
-		
-		else if(playerTwoCardsInHand > playerOneCardsInHand) {
-			System.out.println(playerTwo.name + " wins!");
-		}
-		
-		else {
-			System.out.println("Game is a tie");
-			return;
-		}
-		
-		
-		
+	public static void playCard() {
 	
+		GameLog.printCardsPlayed(playerOne, playerTwo);
+		
+		playerOneCard = playerOne.hand.playerHand.remove();
+		playerTwoCard = playerTwo.hand.playerHand.remove();
+		
+		winnersCards.add(playerOneCard);
+		winnersCards.add(playerTwoCard);
+	}
+	
+	/**
+	 * Gets the number of points for the winner 
+	 * @return number of points that the winning player will add to their total 
+	 */
+	protected int addPoints() {
+		
+		int points = 0;
+		
+		for(int i = 0; i < winnersCards.size(); i++) {
+			points += winnersCards.get(i).rank.getValue();
+		}
+		
+		return points;
 		
 	}
 	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Compares each player's card to determine a winner 
+	 * @return 1 if player one has the higher card, 2 if player two has the higher card, or 3 for a tie 
+	 */
+	public int determineHandWinner() {
+		
+		if(playerOneCard.rank.getValue() > playerTwoCard.rank.getValue())
+			return 1;
+		else if (playerTwoCard.rank.getValue() > playerOneCard.rank.getValue())
+			return 2;
+		else
+			return 3;
+		
+	}
 
-	
+
 
 }

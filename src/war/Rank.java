@@ -2,7 +2,6 @@ package war;
 
 /**
  * 
- * @author zstow
  *  Rank constants, along with their integer values 
  */
 public enum Rank {

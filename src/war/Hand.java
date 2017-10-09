@@ -5,7 +5,7 @@ import java.util.Queue;
 
 /**
  * 
- * @author zstow
+ * 
  * Keeps track of each of the players hands 
  */
 public class Hand extends Deck {
@@ -15,13 +15,15 @@ public class Hand extends Deck {
 	protected Player player;
 	protected int beginningIndex;
 	protected int currentCardCount;
+	protected int numPlayers;
 	
-	public Hand(Player player, Deck deck) {
+	public Hand(Player player, Deck deck, int numPlayers) {
 		
 		this.deck = deck;
 		playerHand = new LinkedList<>();
 		currentCardCount = 0;
 		this.player = player;
+		this.numPlayers = numPlayers;
 		dealHand();
 		
 	}
@@ -31,17 +33,40 @@ public class Hand extends Deck {
 	 *  Each player gets 26 cards 
 	 */
 	private void dealHand() {	
-		if(player.getPlayerNumber() == 1)
-			beginningIndex = 0;
-		else if(player.getPlayerNumber() == 2)
-			beginningIndex = 1;
 		
-		for(int i = beginningIndex; i < 52; i+=2) {
+		if(player.playerNumber == 1)
+			beginningIndex = 0;
+		else if(player.playerNumber == 2)
+			beginningIndex = 1;
+		else if(player.playerNumber == 3)
+			beginningIndex = 2;
+		
+		if(numPlayers == 3)
+			dealThreePlayers();
+		
+		else { 
+			for(int i = beginningIndex; i < 52; i+=2) {
+				Card dealtCard = deck.getNextCard(i);
+				playerHand.add(dealtCard);
+				currentCardCount++;
+			}
+		}
+	}
+	
+	
+	/**
+	 *  Deals the cards to 3 players, used in the three player variation 
+	 */
+	private void dealThreePlayers() {
+		
+		for(int i = beginningIndex; i < 51; i+=3) {
 			Card dealtCard = deck.getNextCard(i);
 			playerHand.add(dealtCard);
 			currentCardCount++;
 		}
+		
 	}
+	
 	
 	
 	/**
@@ -55,3 +80,4 @@ public class Hand extends Deck {
 	}
 
 }
+

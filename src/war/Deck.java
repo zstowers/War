@@ -4,7 +4,6 @@ import java.util.Collections;
 
 /**
  * 
- * @author zstow
  * Consists of a list of 52 cards
  */
 public class Deck {
@@ -31,19 +30,16 @@ public class Deck {
 		
 	}
 	
-	/**
-	 * 
+	/** 
 	 * Shuffles a deck, creating a list of cards in a random order 
 	 */
 	public void shuffleDeck() {
-		
 		Collections.shuffle(cards);
-		
 	}
 	
 	
 	/**
-	 * 
+	 * Gets the card on top of the deck 
 	 * @param index 	Location of the card in the deck 
 	 * @return			Card in the deck at the specified index 
 	 */
@@ -64,10 +60,5 @@ public class Deck {
 		}
 		
 	}
-	
-	
-	
-	 
-	
-	
 }
+

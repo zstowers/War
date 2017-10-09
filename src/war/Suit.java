@@ -2,7 +2,6 @@ package war;
 
 /**
  * 
- * @author zstow
  *	Suit constants 
  */
 
